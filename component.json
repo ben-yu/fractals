@@ -1,0 +1,9 @@
+{
+  "name": "brunch-bower-site",
+  "version": "0.0.1",
+  "main": [],
+  "dependencies": {
+    "console-polyfill": "*",
+    "threejs" : "https://raw.github.com/mrdoob/three.js/master/build/three.js"
+  }
+}
