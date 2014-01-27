@@ -151,10 +151,10 @@ shaderFractal = () ->
     detail = 1
     delta = orig.wheelDeltaY
     s = 1.125
-    if delta < 0
+    if delta > 0
       s = 1.0 / s
     material.uniforms.scale.value *= s
-    #console.log scale
+    scale *= s
     render()
   curX = -1
   curY = -1
@@ -168,8 +168,10 @@ shaderFractal = () ->
       dx = curX - ev.offsetX
       dy = ev.offsetY - curY
 
-      material.uniforms.center.value.x += 2 * dx / (scale * window.innerWidth)
-      material.uniforms.center.value.y += 2 * dy / (scale * window.innerHeight)
+      console.log (dx / window.innerWidth) / scale
+
+      material.uniforms.center.value.x -= (dx / window.innerWidth) * scale
+      material.uniforms.center.value.y -= (dy / window.innerHeight) * scale
 
       render()
 
