@@ -14,6 +14,8 @@ exports.config =
           'vendor/requirejs/require.js'
           'vendor/console-polyfill/index.js'
           'vendor/threejs/index.js'
+          'vendor/jquery/jquery.js'
+          'vendor/jquery/jquery.mousewheel.js'
         ]
 
     stylesheets:

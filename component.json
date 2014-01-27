@@ -4,6 +4,7 @@
   "main": [],
   "dependencies": {
     "console-polyfill": "*",
+    "jquery": "*",
     "threejs" : "https://raw.github.com/mrdoob/three.js/master/build/three.js"
   }
 }

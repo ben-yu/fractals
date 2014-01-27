@@ -119,6 +119,8 @@ shaderFractal = () ->
   
   container.appendChild(renderer.domElement)
 
+  scale = 2.0
+
   uniforms = {
     coordinateTransform: {
       type: "v2",
@@ -126,7 +128,7 @@ shaderFractal = () ->
     }
     uTex:  { type: "t", value: THREE.ImageUtils.loadTexture( "pal.png" ) },
     center: { type: "v2", value: new THREE.Vector2(0.5,0) },
-    scale: { type: "f", value: 2.0 },
+    scale: { type: "f", value: 2.0},
   }
 
   vert = require 'scripts/fractal_vert'
@@ -141,6 +143,45 @@ shaderFractal = () ->
   scene.add(mesh)
 
   window.addEventListener( 'resize', onWindowResize, true )
+
+  $('#shaderFractal').on 'mousewheel', (ev) ->
+    ev.preventDefault()
+    orig = ev.originalEvent
+    #detail = orig.detail
+    detail = 1
+    delta = orig.wheelDeltaY
+    s = 1.125
+    if delta < 0
+      s = 1.0 / s
+    material.uniforms.scale.value *= s
+    #console.log scale
+    render()
+  curX = -1
+  curY = -1
+  $('#shaderFractal')
+  .mousedown (ev) ->
+    curX = ev.offsetX
+    curY = ev.offsetY
+    return
+  .mousemove (ev) ->
+    if curX > 0 and curY > 0
+      dx = curX - ev.offsetX
+      dy = ev.offsetY - curY
+
+      material.uniforms.center.value.x += 2 * dx / (scale * window.innerWidth)
+      material.uniforms.center.value.y += 2 * dy / (scale * window.innerHeight)
+
+      render()
+
+      curX = ev.offsetX
+      curY = ev.offsetY
+      return
+  .mouseup (ev) ->
+    curX = -1
+    curY = -1
+    return
+
+
 
   animate()
 
