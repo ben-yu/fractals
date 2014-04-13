@@ -9,21 +9,6 @@ setPixel = (imageData, x, y, r, g, b, a) ->
   imageData.data[index+2] = b
   imageData.data[index+3] = a
 
-buddhabrot = (x,y,imageData,max_iter) ->
-  x0 = x
-  y0 = y
-  x = 0.0
-  y = 0.0
-  iter = 0
-  
-  while ((x*x + y*y) < 4 and iter < max_iter)
-    xtemp = x*x - y*y + x0
-    y = 2*x*y + y0
-    x = xtemp
-
-    v = getPixel(imageData,(x*(3.5/WIDTH))-2.5,(y*(2/HEIGHT))-1.0)
-    setPixel(imageData,(x*(3.5/WIDTH))-2.5,(y*(2/HEIGHT))-1.0,v+1,0,0,255)
-
 hueToRgb = (p, q, t) ->
   if(t < 0)
     t += 1
@@ -131,8 +116,8 @@ shaderFractal = () ->
     scale: { type: "f", value: 2.0},
   }
 
-  vert = require 'scripts/fractal_vert'
-  frag = require 'scripts/fractal_frag'
+  vert = require 'scripts/mandel_vert'
+  frag = require 'scripts/mandel_frag'
 
   material = new THREE.ShaderMaterial
     uniforms: uniforms,
@@ -141,6 +126,21 @@ shaderFractal = () ->
     
   mesh = new THREE.Mesh( new THREE.PlaneGeometry(10, 10), material)
   scene.add(mesh)
+
+  fractal = {}
+  fractal.type = 'mandel'
+  fractalTypes = ['mandel','julia']
+
+  gui = new dat.GUI
+  typeController = gui.add fractal, 'type', fractalTypes
+
+  typeController.onFinishChange (value) ->
+    if value is 'mandel'
+      mesh.material.fragmentShader = require 'scripts/mandel_frag'
+    else if value is 'julia'
+      mesh.material.fragmentShader = require 'scripts/julia_frag'
+    mesh.material.needsUpdate = true
+
 
   window.addEventListener( 'resize', onWindowResize, true )
 

@@ -1,10 +1,25 @@
 {
-  "name": "brunch-bower-site",
+  "name": "fractals",
   "version": "0.0.1",
-  "main": [],
   "dependencies": {
+    "jquery-mousewheel": "~3.1.9",
     "console-polyfill": "*",
     "jquery": "*",
     "threejs" : "https://raw.github.com/mrdoob/three.js/master/build/three.js"
-  }
+  },
+  "homepage": "https://github.com/ben-yu/fractals",
+  "authors": [
+    "Benjamin Yu <benjamin.sichit.yu@gmail.com>"
+  ],
+  "description": "fractals using webgl",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "vendor",
+    "test",
+    "tests"
+  ]
 }
