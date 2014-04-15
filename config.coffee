@@ -29,6 +29,11 @@ exports.config =
   plugins:
     coffeelint:
       pattern: /^app\/.*\.coffee$/
+      options:
+        max_line_length:
+          value: 80
+          level: "ignore"
+
     jade:
       options:
         pretty: yes # Adds pretty-indentation whitespaces to output (false by default)

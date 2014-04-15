@@ -1,3 +1,21 @@
+createColorTex = (start,mid,end) ->
+  canvas  = document.createElement( 'canvas' )
+  canvas.width = 256
+  canvas.height = 1
+  context = canvas.getContext('2d')
+
+  #Gradient
+  gradient = context.createLinearGradient(0,0,canvas.width,canvas.height)
+  gradient.addColorStop(0,start)
+  gradient.addColorStop(0.2,mid)
+  gradient.addColorStop(0.4,end)
+  gradient.addColorStop(0.7,mid)
+  gradient.addColorStop(1,end)
+  context.fillStyle = gradient
+  context.fillRect(0,0,canvas.width,canvas.height)
+
+  return canvas
+
 getPixel = (imageData, x, y) ->
   index = (x + y * imageData.width)
   return imageData.data[index]
@@ -79,6 +97,13 @@ naiveFractal = () ->
 
 shaderFractal = () ->
 
+  fractal = {}
+  fractal.type = 'mandel'
+  fractal.startColour = '#34495e'
+  fractal.midColour = '#2ecc71'
+  fractal.endColour = '#3498db'
+  fractalTypes = ['mandel','julia']
+
   render = () ->
     renderer.render( scene, camera )
   animate  = () ->
@@ -106,15 +131,21 @@ shaderFractal = () ->
 
   scale = 2.0
 
+  colorTex = new THREE.Texture(createColorTex(fractal.startColour,fractal.midColour,fractal.endColour))
+
   uniforms = {
     coordinateTransform: {
       type: "v2",
       value: new THREE.Vector2(window.innerWidth, window.innerHeight)
     }
-    uTex:  { type: "t", value: THREE.ImageUtils.loadTexture( "pal.png" ) },
+    uTex:
+      type: "t"
+      value: colorTex
     center: { type: "v2", value: new THREE.Vector2(0.5,0) },
     scale: { type: "f", value: 2.0},
   }
+
+  colorTex.needsUpdate = true
 
   vert = require 'scripts/mandel_vert'
   frag = require 'scripts/mandel_frag'
@@ -127,12 +158,32 @@ shaderFractal = () ->
   mesh = new THREE.Mesh( new THREE.PlaneGeometry(10, 10), material)
   scene.add(mesh)
 
-  fractal = {}
-  fractal.type = 'mandel'
-  fractalTypes = ['mandel','julia']
-
   gui = new dat.GUI
   typeController = gui.add fractal, 'type', fractalTypes
+  colorFolder = gui.addFolder 'Color Scheme'
+  startColor = colorFolder.addColor fractal, 'startColour'
+  midColor = colorFolder.addColor fractal, 'midColour'
+  endColor = colorFolder.addColor fractal, 'endColour'
+  colorFolder.open()
+
+  startColor.onChange (value) ->
+    tex = createColorTex(fractal.startColour,fractal.midColour,fractal.endColour)
+    mesh.material.uniforms.uTex.value = new THREE.Texture(tex)
+    mesh.material.uniforms.uTex.value.needsUpdate = true
+    tex.needsUpdate = true
+
+  midColor.onChange (value) ->
+    tex = createColorTex(fractal.startColour,fractal.midColour,fractal.endColour)
+    mesh.material.uniforms.uTex.value = new THREE.Texture(tex)
+    mesh.material.uniforms.uTex.value.needsUpdate = true
+    tex.needsUpdate = true
+
+  endColor.onChange (value) ->
+    tex = createColorTex(fractal.startColour,fractal.midColour,fractal.endColour)
+    mesh.material.uniforms.uTex.value = new THREE.Texture(tex)
+    mesh.material.uniforms.uTex.value.needsUpdate = true
+    tex.needsUpdate = true
+
 
   typeController.onFinishChange (value) ->
     if value is 'mandel'
@@ -147,7 +198,6 @@ shaderFractal = () ->
   $('#shaderFractal').on 'mousewheel', (ev) ->
     ev.preventDefault()
     orig = ev.originalEvent
-    #detail = orig.detail
     detail = 1
     delta = orig.wheelDeltaY
     s = 1.125
@@ -167,8 +217,6 @@ shaderFractal = () ->
     if curX > 0 and curY > 0
       dx = curX - ev.offsetX
       dy = ev.offsetY - curY
-
-      console.log (dx / window.innerWidth) / scale
 
       material.uniforms.center.value.x -= (dx / window.innerWidth) * scale
       material.uniforms.center.value.y -= (dy / window.innerHeight) * scale
