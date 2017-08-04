@@ -1,6 +1,6 @@
 fractals
 ========
 
-Fractals using WebGL
+Fractals using WebGL: http://ben-yu.github.io/fractals/
 
-![mandelbrot](http://ben-yu.com/assets/images/fractal1.png)
+![mandelbrot](http://ben-yu.com/assets/img/fractal.gif)
